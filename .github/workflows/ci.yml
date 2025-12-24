@@ -1,4 +1,4 @@
-name: CI with Automated Testing
+=name: CI with Automated Testing
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.12'
 
       - name: Install Flask for testing
         run: pip install flask
@@ -23,16 +23,15 @@ jobs:
       - name: Run Unit Tests
         run: python test_app.py
 
-- name: Run Trivy vulnerability scanner
+      - name: Build Docker Image
+        run: docker build -t python-cicd-app:latest .
+
+      - name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'python-cicd-app:latest'
           format: 'table'
-          exit-code: '1' # This will fail the build if it finds "CRITICAL" bugs
+          exit-code: '1'
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'	
-      - name: Build Docker Image
-        # This step only runs if the 'Run Unit Tests' step passes!
-        run: docker build -t python-cicd-app .
-	
+          severity: 'CRITICAL,HIGH'

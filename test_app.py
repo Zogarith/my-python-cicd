@@ -3,7 +3,7 @@ import unittest
 
 # IMPORTANT: Set the test database URL BEFORE importing the app
 # GitHub Actions maps the postgres service to localhost:5432
-os.environ['postgresql://my_cicd_db_user:dup6U837TMSvMAosp1Vd1tCLOtEoc8rx@dpg-d55o1iumcj7s73ff6320-a.singapore-postgres.render.com/my_cicd_db'] = 'postgres://user:pass@localhost:5432/myapp'
+os.environ['postgresql://postgresql://my_cicd_db_user:dup6U837TMSvMAosp1Vd1tCLOtEoc8rx@dpg-d55o1iumcj7s73ff6320-a/my_cicd_db'] = 'postgres://user:pass@localhost:5432/myapp'
 
 from app import app
 

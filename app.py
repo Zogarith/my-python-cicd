@@ -7,7 +7,7 @@ app = Flask(__name__)
 def get_db_connection():
     # Use DATABASE_URL if provided (GitHub Actions/Render)
     # Fallback to local Docker Compose address 'db' if not
-    db_url = os.getenv('postgresql://my_cicd_db_user:dup6U837TMSvMAosp1Vd1tCLOtEoc8rx@dpg-d55o1iumcj7s73ff6320-a.singapore-postgres.render.com/my_cicd_db', 'postgres://user:pass@db:5432/myapp')
+    db_url = os.getenv('postgresql://my_cicd_db_user:dup6U837TMSvMAosp1Vd1tCLOtEoc8rx@dpg-d55o1iumcj7s73ff6320-a/my_cicd_db', 'postgres://user:pass@db:5432/myapp')
     conn = psycopg2.connect(db_url)
     return conn
 

@@ -23,10 +23,7 @@ jobs:
       - name: Run Unit Tests
         run: python test_app.py
 
-      - name: Build Docker Image
-        # This step only runs if the 'Run Unit Tests' step passes!
-        run: docker build -t python-cicd-app .
-	- name: Run Trivy vulnerability scanner
+- name: Run Trivy vulnerability scanner
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'python-cicd-app:latest'
@@ -34,4 +31,8 @@ jobs:
           exit-code: '1' # This will fail the build if it finds "CRITICAL" bugs
           ignore-unfixed: true
           vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
+          severity: 'CRITICAL,HIGH'	
+      - name: Build Docker Image
+        # This step only runs if the 'Run Unit Tests' step passes!
+        run: docker build -t python-cicd-app .
+	

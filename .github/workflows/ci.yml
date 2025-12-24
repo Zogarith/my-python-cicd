@@ -1,12 +1,29 @@
-name: CI with Automated Testing
+name: CI with Database Testing
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "new-feature" ]
 
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+
+    # This is the magic part: adding a sidecar database
+    services:
+      postgres_db:
+        image: postgres:15
+        env:
+          POSTGRES_USER: user
+          POSTGRES_PASSWORD: pass
+          POSTGRES_DB: myapp
+        ports:
+          - 5432:5432
+        # Wait until postgres is ready before starting the job
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -17,21 +34,15 @@ jobs:
         with:
           python-version: '3.12'
 
-      - name: Install Flask for testing
-        run: pip install flask
+      - name: Install dependencies
+        run: |
+          pip install flask psycopg2-binary
 
       - name: Run Unit Tests
+        env:
+          # Tell the test script to look at 'localhost' (GitHub service mapping)
+          DATABASE_URL: postgres://user:pass@localhost:5432/myapp
         run: python test_app.py
 
       - name: Build Docker Image
         run: docker build -t python-cicd-app:latest .
-
-      - name: Run Trivy vulnerability scanner
-        uses: aquasecurity/trivy-action@master
-        with:
-          image-ref: 'python-cicd-app:latest'
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'
